@@ -31,7 +31,7 @@ def show_teachers(request):
 @api.get("/schools/", response={200: list[SchoolSchema]})
 def show_schools(request):
     """return a list of all schools"""
-    Schools = School.objects.all()
-    return list(School)
+    schools = School.objects.all()
+    return list(schools)
 
 #4- Delete(D): http method delete 
