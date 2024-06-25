@@ -1,5 +1,5 @@
 from ninja import Schema
-from pydantic import HttpUrl
+# from pydantic import HttpUrl
 
 
 
@@ -7,7 +7,7 @@ class StudentSchema(Schema):
     id: int
     first_name: str
     last_name: str
-    image: HttpUrl
+    # image: HttpUrl
     age: int
     grade: str
 
@@ -16,7 +16,7 @@ class TeacherSchema(Schema):
     id: int
     first_name: str
     last_name: str
-    image: HttpUrl
+    # image: HttpUrl
     teaching: str
 
 
