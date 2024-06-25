@@ -1,7 +1,7 @@
 from pathlib import Path
 import environ
 import os
-
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent 
@@ -70,14 +70,16 @@ WSGI_APPLICATION = "simple_ninja.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': env('DB_NAME', default='simple_ninja_db'),
-        'USER': env('DB_USER', default='postgres'),
-        'PASSWORD': env('DB_PASSWORD', default='postgres'),
-        'HOST': env('DB_HOST', default='127.0.0.1'),
-        'PORT': env('DB_PORT', default='5432'),
-    }
+    # 'default': {
+    #     'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
+    #     'NAME': env('DB_NAME', default='simple_ninja_db'),
+    #     'USER': env('DB_USER', default='postgres'),
+    #     'PASSWORD': env('DB_PASSWORD', default='postgres'),
+    #     'HOST': env('DB_HOST', default='127.0.0.1'),
+    #     'PORT': env('DB_PORT', default='5432'),
+    # }
+
+    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/simple_ninja_db', conn_max_age=600)
 }
 
 
