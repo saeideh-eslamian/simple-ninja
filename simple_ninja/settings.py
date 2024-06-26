@@ -20,8 +20,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['simple-ninja.onrender.com']
-
+# ALLOWED_HOSTS = ['simple-ninja.onrender.com', 'http://127.0.0.1:8000/']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'crud_ninja',
+    'crud_ninja.apps.CrudNinjaConfig',
 ]
 
 MIDDLEWARE = [
@@ -70,16 +70,16 @@ WSGI_APPLICATION = "simple_ninja.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
-    #     'NAME': env('DB_NAME', default='simple_ninja_db'),
-    #     'USER': env('DB_USER', default='postgres'),
-    #     'PASSWORD': env('DB_PASSWORD', default='postgres'),
-    #     'HOST': env('DB_HOST', default='127.0.0.1'),
-    #     'PORT': env('DB_PORT', default='5432'),
-    # }
+    'default': {
+        'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env('DB_NAME', default='simple_ninja_db'),
+        'USER': env('DB_USER', default='postgres'),
+        'PASSWORD': env('DB_PASSWORD', default='postgres'),
+        'HOST': env('DB_HOST', default='127.0.0.1'),
+        'PORT': env('DB_PORT', default='5432'),
+    }
 
-    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/simple_ninja_db', conn_max_age=600)
+    # 'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/simple_ninja_db', conn_max_age=600)
 }
 
 

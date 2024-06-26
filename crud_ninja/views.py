@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from django.urls import reverse
+from django.http import HttpResponse
 
-# Create your views here.
+def my_view(request):
+    url = reverse('crud_ninja:api')  # Use the correct namespace and URL name
+    return HttpResponse(f"API URL: {url}")

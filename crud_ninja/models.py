@@ -12,7 +12,7 @@ def validate_age(age) :
 class Teacher(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    # image = models.ImageField(upload_to='teacher_image/', null=True, blank=True)
+    image = models.ImageField(upload_to='teacher_image/', null=True, blank=True)
     teaching = models.CharField(max_length=100)
 
     def __str__(self):
@@ -63,7 +63,7 @@ class School(models.Model):
 class Student(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    # image = models.ImageField(upload_to='student_image/', null=True, blank=True)
+    image = models.ImageField(upload_to='student_image/', null=True, blank=True)
     age = models.PositiveIntegerField(validators=[validate_age])
     grade = models.PositiveIntegerField(validators=[validate_grade])
     teachers = models.ManyToManyField(Teacher, related_name='students')
