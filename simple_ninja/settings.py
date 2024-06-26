@@ -4,7 +4,7 @@ import os
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent 
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialize environment variables
 env = environ.Env()
@@ -20,8 +20,9 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-# ALLOWED_HOSTS = ['simple-ninja.onrender.com', 'http://127.0.0.1:8000/']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['simple-ninja.onrender.com']
+if DEBUG:
+    ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -69,18 +70,21 @@ WSGI_APPLICATION = "simple_ninja.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': env('DB_NAME', default='simple_ninja_db'),
-        'USER': env('DB_USER', default='postgres'),
-        'PASSWORD': env('DB_PASSWORD', default='postgres'),
-        'HOST': env('DB_HOST', default='127.0.0.1'),
-        'PORT': env('DB_PORT', default='5432'),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': env('DB_NAME', default='simple_ninja_db'),
+            'USER': env('DB_USER', default='postgres'),
+            'PASSWORD': env('DB_PASSWORD', default='postgres'),
+            'HOST': env('DB_HOST', default='127.0.0.1'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
     }
-
-    # 'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/simple_ninja_db', conn_max_age=600)
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/simple_ninja_db', conn_max_age=600)
+    }
 
 
 # Password validation
