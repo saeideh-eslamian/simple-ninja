@@ -52,7 +52,17 @@ def show_students(request, filters: StudentFilterSchema = Query(...)):
     if filters.teachers is not None:
         q = Q()
         for teacher_name in filters.teachers:
-           q |= Q(teachers__first_name__icontains=teacher_name) | Q(teachers__last_name__icontains=teacher_name)
+           full_name = teacher_name.split(" ")
+           if len(full_name)>=2:
+               first_name =full_name[0]
+               last_name = full_name[1]
+               q |= Q(teachers__first_name__icontains=first_name) | Q(teachers__last_name__icontains=last_name)
+           else: 
+               name = full_name[0]
+               q |= Q(teachers__first_name__icontains=name) | Q(teachers__last_name__icontains=name) 
+           
+           print(q)
+        print(q)   
         students = students.filter(q)
     if filters.school is not None:
         students = students.filter(school__name__icontains=filters.school)
