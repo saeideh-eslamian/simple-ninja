@@ -35,8 +35,5 @@ class StudentSchema(Schema):
 
 class StudentFilterSchema(FilterSchema):
     age: Optional[int] = Field(None)
-    teachers: Optional[list] = Field(None, q=[
-        'teachers__first_name__icontains',
-        'teachers__last_name__icontains'
-        ])
+    teachers: Optional[list[str]] = Field(None)
     school: Optional[str] = Field(None, q='school__name__icontains')

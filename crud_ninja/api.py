@@ -5,6 +5,7 @@ from ninja import NinjaAPI, Query
 from django.shortcuts import get_object_or_404
 from ninja.security import APIKeyHeader
 import jwt
+from django.db.models import Q
 
 # All import from our apps and project
 from .models import Student,Teacher, School
@@ -44,11 +45,15 @@ api = NinjaAPI()
 def show_students(request, filters: StudentFilterSchema = Query(...)):
     """return a list of all students"""
     students = Student.objects.all()
+
     # Apply filters dynamically
     if filters.age is not None:
         students = students.filter(age=filters.age)
     if filters.teachers is not None:
-        students = students.filter(teachers__first_name__icontains=filters.teachers)
+        q = Q()
+        for teacher_name in filters.teachers:
+           q |= Q(teachers__first_name__icontains=teacher_name) | Q(teachers__last_name__icontains=teacher_name)
+        students = students.filter(q)
     if filters.school is not None:
         students = students.filter(school__name__icontains=filters.school)
     return list(students)
