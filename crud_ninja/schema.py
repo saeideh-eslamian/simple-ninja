@@ -9,7 +9,7 @@ class TeacherSchema(Schema):
     id: int
     first_name: str
     last_name: str
-    # image: HttpUrl
+    image: Optional[str] = None
     teaching: str
 
 
@@ -27,7 +27,7 @@ class StudentSchema(Schema):
     id: int
     first_name: str
     last_name: str
-    # image: HttpUrl
+    image: Optional[str] = None
     age: int
     grade: str
     teachers: list[TeacherSchema]
