@@ -98,3 +98,24 @@ def show_schools(request, school_id:int):
     return teacher
 
 #4- Delete(D): http method delete 
+
+@api.delete("/students/{student_id}", auth=header_key)
+def delete_student(request, student_id: int):
+    student = get_object_or_404(Student, id=student_id)
+    message = f'{student.first_name} {student.last_name} deleted successfully'
+    student.delete()
+    return {"success": True, "message": message}
+
+@api.delete("/teachers/{teacher_id}", auth=header_key)
+def delete_student(request, teacher_id: int):
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    message = f'{teacher.first_name} {teacher.last_name} deleted successfully'
+    teacher.delete()
+    return {"success": True, "message": message}
+
+@api.delete("/schools/{school_id}", auth=header_key)
+def delete_school(request, school_id: int):
+    school = get_object_or_404(Student, id=school_id)
+    message = f'{school.name} deleted successfully'
+    school.delete()
+    return {"success": True, "message": message}

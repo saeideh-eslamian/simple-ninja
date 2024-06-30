@@ -37,3 +37,6 @@ class StudentFilterSchema(FilterSchema):
     age: Optional[int] = Field(None)
     teachers: Optional[list[str]] = Field(None)
     school: Optional[str] = Field(None, q='school__name__icontains')
+
+class Error(Schema):
+    message: str    
