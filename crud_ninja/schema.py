@@ -1,8 +1,7 @@
 from ninja import Schema, FilterSchema, Field
 from pydantic import HttpUrl
 from typing import Optional
-
-
+from pydantic import BaseModel
 
 
 class TeacherSchema(Schema):
@@ -22,7 +21,6 @@ class SchoolSchema(Schema):
     teachers: list[TeacherSchema]
 
 
-
 class StudentSchema(Schema):
     id: int
     first_name: str
@@ -38,5 +36,9 @@ class StudentFilterSchema(FilterSchema):
     teachers: Optional[list[str]] = Field(None)
     school: Optional[str] = Field(None, q='school__name__icontains')
 
-class Error(Schema):
+class ErrorSchema(Schema):
     message: str    
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str    
