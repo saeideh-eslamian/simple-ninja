@@ -22,7 +22,9 @@ from .schema import (
     StudentFilterSchema, 
     ErrorSchema, 
     LoginSchema,
-    CreateStudentSchema
+    CreateStudentSchema,
+    CreateTeacherSchema,
+    CreateSchoolSchema
 )
 
 # create instance NinjaAPI
@@ -85,12 +87,47 @@ class AddController():
         }
         
         return response_data
+    @http_post("school/", response={201: SchoolSchema})
+    def add_school(self, request, student: CreateSchoolSchema):
+        school_data = student.dict()
+        teachers_ids = school_data.pop('teachers_id')
+
+        # Create the School instance
+        new_school = School(**school_data)
+        new_school.save() 
+
+        # Associate the teachers after saving the student
+        if teachers_ids:
+            teachers = Teacher.objects.filter(id__in=teachers_ids)
+            new_school.teachers.set(teachers)
+        
+        # Prepare the response data
+        response_data = {
+            'id': new_school.id,
+            'name': new_school.name,
+            'city': new_school.city,
+            'level': new_school.level,
+            'kind': new_school.kind,
+            'teachers_id': teachers_ids,
+        }
+        
+        return response_data
+    
+    @http_post("teacher/", response={201: TeacherSchema})
+    def add_teacher(self, request, teacher: CreateTeacherSchema):
+
+        # Create the Teacher instance
+        new_teacher = Teacher(**teacher.dict())
+        new_teacher.save()
+        
+        return new_teacher
 
 api.register_controllers(AddController)
 
 
 
 #2- Update(U): http method Put
+
 
 
 #3- Read(R): http method get

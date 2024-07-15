@@ -10,6 +10,12 @@ class TeacherSchema(Schema):
     image: Optional[str] = None
     teaching: str
 
+class CreateTeacherSchema(Schema):
+    first_name: str
+    last_name: str
+    image: Optional[str] = None
+    teaching: str    
+
 
 class SchoolSchema(Schema):
     id: Optional[int] = None
@@ -18,6 +24,13 @@ class SchoolSchema(Schema):
     level: str
     kind: str
     teachers_id: Optional[list[int]]
+
+class CreateSchoolSchema(Schema):
+    name: str
+    city: str
+    level: str
+    kind: str
+    teachers_id: Optional[list[int]]    
 
 
 class StudentSchema(Schema):
