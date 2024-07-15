@@ -1,0 +1,32 @@
+    {
+        "first_name": "Maryam",
+        "last_name": "rostami",
+        "image": "/media/student_image/book2.jpg",
+        "age": 10,
+        "grade": "3",
+        "teachers": [
+            {
+                "id": 1,
+                "first_name": "Ali",
+                "last_name": "Rostami",
+                "image": null,
+                "teaching": "Math"
+            }
+],
+        "school": {
+            "id": 1,
+            "name": "Zudwest",
+            "city": "Itzehoe",
+            "level": "primary",
+            "kind": "state",
+            "teachers": [
+                {
+                    "id": 1,
+                    "first_name": "Ali",
+                    "last_name": "Rostami",
+                    "image": null,
+                    "teaching": "Math"
+                }
+            ]
+        }
+    }

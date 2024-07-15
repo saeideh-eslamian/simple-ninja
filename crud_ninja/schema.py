@@ -1,11 +1,10 @@
 from ninja import Schema, FilterSchema, Field
-from pydantic import HttpUrl
 from typing import Optional
 from pydantic import BaseModel
 
 
 class TeacherSchema(Schema):
-    id: int
+    id: Optional[int] = None
     first_name: str
     last_name: str
     image: Optional[str] = None
@@ -13,23 +12,32 @@ class TeacherSchema(Schema):
 
 
 class SchoolSchema(Schema):
-    id: int
+    id: Optional[int] = None
     name: str
     city: str
     level: str
     kind: str
-    teachers: list[TeacherSchema]
+    teachers_id: Optional[list[int]]
 
 
 class StudentSchema(Schema):
-    id: int
+    id: Optional[int] = None
     first_name: str
     last_name: str
     image: Optional[str] = None
     age: int
     grade: str
-    teachers: list[TeacherSchema]
-    school : SchoolSchema
+    teachers_id: list[int]
+    school_id : Optional[int]
+
+class CreateStudentSchema(Schema):
+    first_name: str
+    last_name: str
+    image: Optional[str] = None
+    age: int
+    grade: str
+    teachers_id: list[int]
+    school_id: Optional[int]    
 
 class StudentFilterSchema(FilterSchema):
     age: Optional[int] = Field(None)
