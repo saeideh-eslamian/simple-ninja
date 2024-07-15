@@ -21,22 +21,9 @@ from .schema import (
     SchoolSchema, 
     StudentFilterSchema, 
     ErrorSchema, 
-    LoginSchema
+    LoginSchema,
+    CreateStudentSchema
 )
-
-# class ApiKey(APIKeyHeader):
-#     param_name = "Authorization"
-
-#     def authenticate(self, request: HttpRequest, key: str | None) -> Any | None:
-#         try:
-#             access_token = key.split(" ")[1]
-#             data = jwt.decode(access_token, settings.SECRET_KEY, algorithms=["HS256"])
-#             request.auth = data
-#         except jwt.DecodeError as e:  
-#             return e  
-#         return data
-    
-# header_key = ApiKey()    
 
 # create instance NinjaAPI
 api = NinjaExtraAPI()
@@ -44,7 +31,7 @@ api = NinjaExtraAPI()
 # login
 @api_controller('')
 class AuthController:
-    @http_post('/login')
+    @http_post('login/')
     def login(self, request, data: LoginSchema):
         user = authenticate(username=data.username, password=data.password)
         if user is not None:
@@ -62,17 +49,52 @@ api.register_controllers(AuthController)
 
 # CRUD IN NINja
 
-#1- Create(C): http method post 
-# @api.post("/create-student", auth=header_key)
-# def create_student(request, sudent: StudentSchema):
-#     pass
+# 1- Create(C): http method post 
+# I use classbase ninja for learn more
+@api_controller('add/', auth=JWTAuth(), permissions=[])
+class AddController():
+    @http_post("student/", response={201: StudentSchema})
+    def add_student(self, request, student: CreateStudentSchema):
+        # Fetch the related School instance
+        school = School.objects.get(id=student.school_id) if student.school_id else None
+
+        # Prepare the data for creating the Student instance
+        student_data = student.dict()
+        teachers_ids = student_data.pop('teachers_id')
+        student_data.pop('school_id')
+
+        # Create the Student instance
+        new_student = Student(**student_data, school=school)
+        new_student.save()  # Save the student instance first to get an ID
+
+        # Associate the teachers after saving the student
+        if teachers_ids:
+            teachers = Teacher.objects.filter(id__in=teachers_ids)
+            new_student.teachers.set(teachers)
+        
+        # Prepare the response data
+        response_data = {
+            'id': new_student.id,
+            'first_name': new_student.first_name,
+            'last_name': new_student.last_name,
+            'image': new_student.image,
+            'age': new_student.age,
+            'grade': new_student.grade,
+            'teachers_id': teachers_ids,
+            'school_id': new_student.school.id if new_student.school else None
+        }
+        
+        return response_data
+
+api.register_controllers(AddController)
+
 
 
 #2- Update(U): http method Put
 
 
 #3- Read(R): http method get
-@api.get("/students/", response=list[StudentSchema])
+@api.get("students/", response=list[StudentSchema])
 def show_students(request, filters: StudentFilterSchema = Query(...)):
     """return a list of all students"""
     students = Student.objects.all()
@@ -96,33 +118,62 @@ def show_students(request, filters: StudentFilterSchema = Query(...)):
         students = students.filter(q)
     if filters.school is not None:
         students = students.filter(school__name__icontains=filters.school)
-    return list(students)
 
-@api.get("/teachers/", response=list[TeacherSchema])
+    response = []
+    for student in students:
+        student_data = {
+            'id': student.id,
+            'first_name': student.first_name,
+            'last_name': student.last_name,
+            'image': student.image.url if student.image else None,
+            'age': student.age,
+            'grade': student.grade,
+            'teachers_id': [teacher.id for teacher in student.teachers.all()],
+            'school_id': student.school.id if student.school else None,
+        }
+        response.append(student_data)
+
+    return response    
+
+@api.get("teachers/", response=list[TeacherSchema])
 def show_teachers(request):
     """return a list of all teachers"""
     teachers = Teacher.objects.all()
     return list(teachers)
 
-@api.get("/schools/", response=list[SchoolSchema])
+@api.get("schools/", response=list[SchoolSchema])
 def show_schools(request):
     """return a list of all schools"""
     schools = School.objects.all()
-    return list(schools)
 
-@api.get("/student/{student_id}", response=StudentSchema)
+    response = []
+    for school in schools:
+        student_data = {
+            'id': school.id,
+            'name': school.name,
+            'city': school.city,
+            'level': school.level,
+            'kind': school.kind,
+            'teachers_id': [teacher.id for teacher in school.teachers.all()],
+        }
+        response.append(student_data)
+
+    return response    
+
+
+@api.get("student/{student_id}/", response=StudentSchema)
 def show_students(request, student_id:int):
     """return a Specefic student by id for show details"""
     student = get_object_or_404(Student, pk=student_id)
     return student
 
-@api.get("/teacher/{teacher_id}", response=TeacherSchema)
+@api.get("teacher/{teacher_id}/", response=TeacherSchema)
 def show_teachers(request, teacher_id:int):
     """return a Specefic teacher by id for show details"""
     teacher = get_object_or_404(Teacher, pk=teacher_id)
     return teacher
 
-@api.get("/school/{school_id}", response=SchoolSchema)
+@api.get("school/{school_id}/", response=SchoolSchema)
 def show_schools(request, school_id:int):
     """return a Specefic school by id for show details"""
     teacher = get_object_or_404(School, pk=school_id)
@@ -130,21 +181,21 @@ def show_schools(request, school_id:int):
 
 #4- Delete(D): http method delete 
 
-@api.delete("/students/{student_id}", auth=JWTAuth())
+@api.delete("students/{student_id}/", auth=JWTAuth())
 def delete_student(request, student_id: int):
     student = get_object_or_404(Student, id=student_id)
     message = f'{student.first_name} {student.last_name} deleted successfully'
     student.delete()
     return {"success": True, "message": message}
 
-@api.delete("/teachers/{teacher_id}", auth=JWTAuth())
+@api.delete("teachers/{teacher_id}/", auth=JWTAuth())
 def delete_teacher(request, teacher_id: int):
     teacher = get_object_or_404(Teacher, id=teacher_id)
     message = f'{teacher.first_name} {teacher.last_name} deleted successfully'
     teacher.delete()
     return {"success": True, "message": message}
 
-@api.delete("/schools/{school_id}", auth=JWTAuth())
+@api.delete("schools/{school_id}/", auth=JWTAuth())
 def delete_school(request, school_id: int):
     school = get_object_or_404(Student, id=school_id)
     message = f'{school.name} deleted successfully'
